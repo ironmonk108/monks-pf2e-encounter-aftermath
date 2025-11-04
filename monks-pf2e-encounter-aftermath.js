@@ -53,7 +53,7 @@ export class MonksPF2EEncounterAftermath {
 
         MonksPF2EEncounterAftermath.SOCKET = "module.monks-pf2e-encounter-aftermath";
 
-        patchFunc("ActorSheet.prototype._renderInner", async function (wrapped, ...args) {
+        patchFunc("foundry.appv1.sheets.ActorSheet.prototype._renderInner", async function (wrapped, ...args) {
             let inner = await wrapped(...args);
 
             if (this.constructor.name == "PartySheetPF2e") {
@@ -119,7 +119,7 @@ export class MonksPF2EEncounterAftermath {
                     aftermath
                 }
 
-                let template = await renderTemplate("modules/monks-pf2e-encounter-aftermath/templates/party-activities.html", data);
+                let template = await foundry.applications.handlebars.renderTemplate("modules/monks-pf2e-encounter-aftermath/templates/party-activities.html", data);
                 let activityTab = $("<div>").attr("data-tab", "aftermath").addClass("tab").append(template);
 
                 $('> .sub-nav a[data-tab="exploration"]', inner).after($("<a>").attr("data-tab", "aftermath").text(i18n("MonksPF2eEncounterAftermath.Aftermath")));
@@ -151,7 +151,7 @@ export class MonksPF2EEncounterAftermath {
                         let activities = foundry.utils.getProperty(member, "flags.monks-pf2e-encounter-aftermath.activities") || [];
                         let actions = activities.filter(a => a.elapsed >= a.interval);
                         if (actions.length) {
-                            let content = await renderTemplate("modules/monks-pf2e-encounter-aftermath/templates/whisper-actions.html", { actorId: member.uuid, actions });
+                            let content = await foundry.applications.handlebars.renderTemplate("modules/monks-pf2e-encounter-aftermath/templates/whisper-actions.html", { actorId: member.uuid, actions });
                             ChatMessage.create({
                                 content: content,
                                 flavor: i18n("MonksPF2eEncounterAftermath.WhisperSummaryFlavor"),
@@ -256,7 +256,7 @@ export class MonksPF2EEncounterAftermath {
             }
 
             if (partyMembers.length > 0) {
-                let msg = await renderTemplate("modules/monks-pf2e-encounter-aftermath/templates/chat-summary.html", { party: partyMembers });
+                let msg = await foundry.applications.handlebars.renderTemplate("modules/monks-pf2e-encounter-aftermath/templates/chat-summary.html", { party: partyMembers });
                 ChatMessage.create({
                     content: msg,
                     speaker: ChatMessage.getSpeaker({ actor: game.actors.party }),
@@ -466,17 +466,17 @@ Hooks.on("renderPartySheetPF2e", async (partySheet, html, data) => {
     });
 
     if (!partySheet._mpb_context_activity) {
-        partySheet._mpb_context_activity = new ContextMenu(content, ".member-activity div.empty", [
+        partySheet._mpb_context_activity = new foundry.applications.ux.ContextMenu.implementation(content, ".member-activity div.empty", [
             {
                 name: i18n("MonksPF2eEncounterAftermath.DoNothing"),
                 icon: '<i class="far fa-hourglass"></i>',
-                condition: async (elem) => {
-                    let actorUuid = elem[0].closest(".member-activity").dataset.actorUuid;
+                condition: async (li) => {
+                    let actorUuid = li.closest(".member-activity").dataset.actorUuid;
                     let actor = await fromUuid(actorUuid);
                     return (actor && actor.testUserPermission(game.user, "OWNER"));
                 },
-                callback: async (elem) => {
-                    let actorUuid = elem[0].closest(".member-activity").dataset.actorUuid;
+                callback: async (li) => {
+                    let actorUuid = li.closest(".member-activity").dataset.actorUuid;
                     let actor = await fromUuid(actorUuid);
                     if (actor && actor.testUserPermission(game.user, "OWNER")) {
                         let activities = foundry.utils.duplicate(foundry.utils.getProperty(actor, "flags.monks-pf2e-encounter-aftermath.activities") || []);
@@ -495,29 +495,29 @@ Hooks.on("renderPartySheetPF2e", async (partySheet, html, data) => {
                     }
                 }
             }
-        ]);
+        ], { fixed: true, jQuery: false });
     }
     if (!partySheet._mpb_context_previous) {
-        partySheet._mpb_context_previous = new ContextMenu(content, ".member-activity .previous-activity", [
+        partySheet._mpb_context_previous = new foundry.applications.ux.ContextMenu.implementation(content, ".member-activity .previous-activity", [
             {
                 name: i18n("MonksPF2eEncounterAftermath.RemoveFromPreviousList"),
                 icon: '<i class="far fa-trash"></i>',
-                condition: async (elem) => {
-                    let actorUuid = elem[0].closest(".member-activity").dataset.actorUuid;
+                condition: async (li) => {
+                    let actorUuid = li.closest(".member-activity").dataset.actorUuid;
                     let actor = await fromUuid(actorUuid);
                     return (actor && actor.testUserPermission(game.user, "OWNER"));
                 },
-                callback: async (elem) => {
-                    let actorUuid = elem[0].closest(".member-activity").dataset.actorUuid;
+                callback: async (li) => {
+                    let actorUuid = li.closest(".member-activity").dataset.actorUuid;
                     let actor = await fromUuid(actorUuid);
                     if (actor && actor.testUserPermission(game.user, "OWNER")) {
                         let previous = foundry.utils.duplicate(foundry.utils.getProperty(actor, "flags.monks-pf2e-encounter-aftermath.previous") || []);
-                        previous = previous.filter(b => b.uuid != elem[0].dataset.uuid);
+                        previous = previous.filter(b => b.uuid != li.dataset.uuid);
                         await actor.setFlag("monks-pf2e-encounter-aftermath", "previous", previous);
                     }
                 }
             }
-        ]);
+        ], { fixed: true, jQuery: false });
     }
 });
 
@@ -552,7 +552,7 @@ Hooks.on("deleteCombat", async (combat) => {
                     user: game.user.id,
                     speaker: ChatMessage.getSpeaker({ actor: game.actors.party }),
                     flavor: i18n("MonksPF2eEncounterAftermath.CombatEndFlavor"), //"The battle is over!"
-                    content: await renderTemplate("modules/monks-pf2e-encounter-aftermath/templates/combat-end.html", {
+                    content: await foundry.applications.handlebars.renderTemplate("modules/monks-pf2e-encounter-aftermath/templates/combat-end.html", {
                         timeMsg
                     }),
                     flags: {
