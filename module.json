@@ -1,15 +1,15 @@
 {
   "title": "Monk's PF2e Encounter Aftermath",
   "description": "Ever ask your players after a combat what 'What are you doing now' and then have to awkwardly figure out what's happening every 10 minutes, while everyone is talking over each other.  Let's do better.",
-  "version": "12.02",
+  "version": "13.01",
   "authors": [
     {
       "name": "IronMonk",
-      "discord": "ironmonk88#4075",
+      "discord": "ironmonk108",
       "flags": {
-        "github": "ironmonk88",
+        "github": "ironmonk108",
         "patreon": "ironmonk",
-        "ko-fi": "ironmonk88"
+        "ko-fi": "ironmonk108"
       }
     }
   ],
@@ -43,18 +43,18 @@
 		}
 	]
   },
-  "url": "https://github.com/ironmonk88/monks-pf2e-encounter-aftermath",
-  "download": "https://github.com/ironmonk88/monks-pf2e-encounter-aftermath/archive/12.02.zip",
-  "manifest": "https://github.com/ironmonk88/monks-pf2e-encounter-aftermath/releases/latest/download/module.json",
-  "bugs": "https://github.com/ironmonk88/monks-pf2e-encounter-aftermath/issues",
+  "url": "https://github.com/ironmonk108/monks-pf2e-encounter-aftermath",
+  "download": "https://github.com/ironmonk108/monks-pf2e-encounter-aftermath/archive/13.01.zip",
+  "manifest": "https://github.com/ironmonk108/monks-pf2e-encounter-aftermath/releases/latest/download/module.json",
+  "bugs": "https://github.com/ironmonk108/monks-pf2e-encounter-aftermath/issues",
   "id": "monks-pf2e-encounter-aftermath",
   "compatibility": {
-    "minimum": "12",
-    "verified": "12"
+    "minimum": "13",
+    "verified": "13"
   },
   "name": "monks-pf2e-encounter-aftermath",
-  "minimumCoreVersion": "12",
-  "compatibleCoreVersion": "12",
+  "minimumCoreVersion": "13",
+  "compatibleCoreVersion": "13",
   "flags": {
     "allowBugReporter": true
   }
